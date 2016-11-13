@@ -18,11 +18,12 @@ include('header.php');
     
     <?php foreach($questions as $row) { ?>
     
-       
+    <?php $ans_array = array($row->answer);?>
+	
+    
     <h4><?=$row->blanksid?>.<?=$row->question?></h4>
     
-	<input type="text" name="quizid<?php $row->blanksid?>" value="" required><br>
-
+	<input type="text" name="quizid<?=$row->blanksid?>" value="" required><br>
 	
     <?php } ?>
     
@@ -31,6 +32,7 @@ include('header.php');
     <input type="submit" value="Submit!">
 	<br><br>
     </form>
+    
 </div>
 
 </body>

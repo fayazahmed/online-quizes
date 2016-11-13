@@ -7,8 +7,8 @@ $count_query = mysql_query("SELECT NULL FROM multiple_choice");
 $count = mysql_num_rows($count_query);
 
 //pagination starts
-if(isset($_GET['page'])){
-	$page = preg_replace("#[^0-9]#","",$_GET['page']);
+if(isset($_POST['page'])){
+	$page = preg_replace("#[^0-9]#","",$_POST['page']);
 } else{
 	$page = 1;
 }
@@ -21,23 +21,33 @@ if($page < 1){
 } else if($page > $lastPage){
 	$page = $lastPage;
 }
+$pagInation = NULL;
+if( isset($_POST['prev']) )
+{
+     $page = $page - 1;
+	 $pagInation .="<input type='hidden' name='page' value='".$page."'/>";
+}
+if( isset($_POST['next']) ){
+	$page = $page + 1;
+	$pagInation .="<input type='hidden' name='page' value='".$page."'/>";
+}
 
 $limit = "LIMIT " .($page - 1)*$perPage .", $perPage";
 
 $query = mysql_query("SELECT * FROM multiple_choice $limit");
 
-$pagInation = NULL;
 
+	
 if($lastPage != 1){
 	
 	if($page != 1){
 		$prev = $page - 1;
-		$pagInation .= '<a href="'.base_url().'multipledisplay'.'?page='.$prev.'">Previous</a> &nbsp; &nbsp; ';
+		$pagInation .= "<input type='submit' name='prev' value='Previous'/> &nbsp; &nbsp; ";
 	}
 
 	if($page != $lastPage){
 		$next = $page + 1;
-		$pagInation .= ' &nbsp; &nbsp; <a href="'.base_url().'multipledisplay'.'?page='.$next.'">Next</a> &nbsp; &nbsp; ';
+		$pagInation .=  "&nbsp; &nbsp; <input type='submit' name='next' value='Next'/>";
 		
 	} 
 }
@@ -54,7 +64,7 @@ if($lastPage != 1){
 <div id="container">
 	<h1 align="center">Questions</h1>
 	
-    <form method="post" action="<?php echo base_url();?>Multiple/multipleresultdisplay">
+<form method="post" action="<?php echo base_url();?>multipledisplay">    
 
 <table align="center" style="border:solid blue;" cellpadding="35" bgcolor="#AEFFF9">
 <tr>
@@ -74,7 +84,7 @@ while($row = mysql_fetch_array($query)){
 	
 	foreach ($ans as $option) {
 		
-    echo "<input type='radio' name='quizid' required>".$option."</input><br>";
+    echo "<input type='radio' name='quizid".$row['multiplechoiceid']."' value='".$option."' required/>".$option."<br>";
 	} unset($option);
 
 	echo "<br/>";
@@ -87,9 +97,10 @@ while($row = mysql_fetch_array($query)){
 </tr>
 
 </table>
+</form>
  <br>
 
-
+<form method="post" action="<?php echo base_url();?>multipleresultdisplay">
  <br><br>
     <input type="submit" align="right" value="Submit!">
     </form>
